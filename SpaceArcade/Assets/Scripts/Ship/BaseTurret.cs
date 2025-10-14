@@ -1,66 +1,68 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace SpaceArcade.Ship
 {
-    public abstract class BaseTurret : MonoBehaviour
+    public abstract class BaseTurret
     {
-        [Header("Turret Settings")]
-        [SerializeField] protected Transform[] barrels;
-        [SerializeField] protected Projectile projectilePrefab;
-        [SerializeField] protected float fireRate = 1f;
-        [SerializeField] protected float rotationSpeed = 5f;
-        
-        protected bool isFiring;
-        protected Coroutine shootingCoroutine;
-        
+        protected Transform[] Barrels;
+        protected Transform Turret;
+        protected Projectile ProjectilePrefab;
+
+        protected float FireRate;
+        protected float RotationSpeed;
+        protected bool IsFiring;
+
         int _currentBarrelIndex;
-        float _nextTimeToFire;
-        
+        float _nextFireTime;
+
+        public BaseTurret(Transform turret, Transform[] barrels, Projectile projectilePrefab, float fireRate, float rotationSpeed)
+        {
+            Turret = turret;
+            Barrels = barrels;
+            ProjectilePrefab = projectilePrefab;
+            FireRate = Mathf.Max(0.001f, fireRate);
+            RotationSpeed = rotationSpeed;
+        }
+
+
+        public virtual void Tick()
+        {
+            if (!IsFiring || Time.time < _nextFireTime)
+                return;
+
+            ShootFromBarrel(Barrels[_currentBarrelIndex]);
+            _currentBarrelIndex = (_currentBarrelIndex + 1) % Barrels.Length;
+            _nextFireTime = Time.time + FireRate;
+        }
+
         protected float AimAtTarget(Vector2 targetPosition, Vector2 turretPosition)
         {
             Vector2 direction = targetPosition - turretPosition;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            Turret.rotation = Quaternion.Slerp(Turret.rotation, targetRotation, RotationSpeed * Time.deltaTime);
             return angle;
         }
 
-        protected IEnumerator ShootRoutine()
+        public void StartShooting()
         {
-            while (isFiring)
-            {
-                ShootFromBarrel(barrels[_currentBarrelIndex]);
-                _currentBarrelIndex = (_currentBarrelIndex + 1) % barrels.Length;
-                yield return new WaitForSeconds(fireRate);
-            }
+            IsFiring = true;
         }
 
-        void ShootFromBarrel(Transform barrel)
+        public void EndShooting()
         {
-            _nextTimeToFire = Time.time + fireRate;
-
-            var projectile = Instantiate(projectilePrefab, barrel.position, barrel.rotation);
-            projectile.SetOwner(transform.parent.gameObject);
+            IsFiring = false;
         }
 
-        protected void StartShooting()
+        protected virtual void ShootFromBarrel(Transform barrel)
         {
-            if (shootingCoroutine != null) return;
+            if (ProjectilePrefab == null || barrel == null)
+                return;
 
-            if (Time.time >= _nextTimeToFire)
-            {
-                isFiring = true;
-                shootingCoroutine = StartCoroutine(ShootRoutine());
-            }
-        }
-        
-        protected void EndShooting()
-        {
-            isFiring = false;
-            if (shootingCoroutine != null) 
-                StopCoroutine(shootingCoroutine);
-            shootingCoroutine = null;
+            //TODO Тут замінити на ObjectPool
+            
+            Projectile projectile = Object.Instantiate(ProjectilePrefab, barrel.position, barrel.rotation);
+            projectile.SetOwner(Turret.parent != null ? Turret.parent.gameObject : null);
         }
     }
 }

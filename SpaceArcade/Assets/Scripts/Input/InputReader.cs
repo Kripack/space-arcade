@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace SpaceArcade.Input
 {
-    [CreateAssetMenu(menuName = "ScriptableObjects/InputReader")]
+    [CreateAssetMenu(menuName = "InputReader")]
     public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions, InputSystem_Actions.IUIActions
     {
         public bool IsShiftPressed { get; private set; }

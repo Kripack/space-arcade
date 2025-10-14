@@ -1,5 +1,4 @@
-﻿using System;
-using SpaceArcade.Input;
+﻿using SpaceArcade.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,21 +6,24 @@ namespace SpaceArcade.Ship
 {
     public class ManualTurret : BaseTurret
     {
-        [SerializeField] InputReader inputReader;
+        InputReader _inputReader;
         Camera _mainCamera;
-        void OnEnable()
+
+        public ManualTurret(Transform turret, Transform[] barrels, Projectile projectilePrefab, float fireRate, float rotationSpeed, InputReader inputReader)
+            : base(turret, barrels, projectilePrefab, fireRate, rotationSpeed)
         {
-            inputReader.Attack += HandleAttackInput;
+            _inputReader = inputReader;
         }
 
-        void OnDisable()
+        public void Init()
         {
-            inputReader.Attack -= HandleAttackInput;
-        }
-
-        void Start()
-        {
+            _inputReader.Attack += HandleAttackInput;
             _mainCamera = Camera.main;
+        }
+
+        public void OnDisable()
+        {
+            _inputReader.Attack -= HandleAttackInput;
         }
 
         void HandleAttackInput(InputAction.CallbackContext context)
@@ -36,10 +38,11 @@ namespace SpaceArcade.Ship
             }
         }
 
-        void FixedUpdate()
+        public override void Tick()
         {
-            var turretScreenPos = _mainCamera.WorldToScreenPoint(transform.position);
+            var turretScreenPos = _mainCamera.WorldToScreenPoint(Turret.position);
             AimAtTarget(CustomPointer.pointerPosition, turretScreenPos);
+            base.Tick();
         }
     }
 }

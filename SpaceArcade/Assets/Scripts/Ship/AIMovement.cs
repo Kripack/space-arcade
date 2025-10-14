@@ -1,40 +1,46 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SpaceArcade.Ship
 {
-    public class AIMovement : MonoBehaviour
+    public class AIMovement
     {
-        [Header("Movement Settings")]
-        [SerializeField] protected float movementForce = 2f;
-        [SerializeField] float brakeForce = 2f;
-        [SerializeField] protected float maxSpeed = 5f;
-        [SerializeField] protected float rotationForce = 0.4f;
-        
-        [Header("AI Settings")]
-        [SerializeField] float obstacleAvoidDistance = 5f;
-        [SerializeField] float stoppingDistance = 3f;
-        [SerializeField] LayerMask obstacleLayer;
-        [SerializeField] string targetTag;
+        float _movementForce;
+        float _brakeForce;
+        float _maxSpeed;
+        float _rotationForce;
+        float _obstacleAvoidDistance;
+        float _stoppingDistance;
+        LayerMask _obstacleLayer;
+        string _targetTag;
         
         Transform _target;
+        Transform _transform;
         bool _isAvoiding;
         Rigidbody2D _rb;
 
-        void Start()
+        public AIMovement(Transform target, Transform transform, Rigidbody2D rb, ShipConfig config, LayerMask obstacleLayer)
         {
-            _rb = GetComponent<Rigidbody2D>();
-            _target = GameObject.FindGameObjectWithTag("Player").transform;
+            _rb = rb;
+            _target = target;
+            _transform = transform;
+            _obstacleLayer = obstacleLayer;
+            _targetTag = target.tag;
+            _movementForce = config.movementForce;
+            _brakeForce = config.brakeForce;
+            _maxSpeed = config.maxSpeed;
+            _rotationForce = config.rotationForce;
+            _obstacleAvoidDistance = config.obstacleAvoidDistance;
+            _stoppingDistance = config.stoppingDistance;
         }
         
-        void FixedUpdate()
+        public void Tick()
         {
             Vector2 targetDirection = GetMovementDirection();
-            float distanceToPlayer = Vector2.Distance(transform.position, _target.position);
+            float distanceToPlayer = Vector2.Distance(_transform.position, _target.position);
             
             HandleRotation(targetDirection);
             
-            if (distanceToPlayer > stoppingDistance)
+            if (distanceToPlayer > _stoppingDistance)
             {
                 HandleThrust();
             }
@@ -46,7 +52,7 @@ namespace SpaceArcade.Ship
         
         Vector2 GetMovementDirection()
         {
-            Vector2 directionToPlayer = (_target.position - transform.position).normalized;
+            Vector2 directionToPlayer = (_target.position - _transform.position).normalized;
             
             if (CheckForObstacles(out RaycastHit2D hit))
             {
@@ -63,20 +69,20 @@ namespace SpaceArcade.Ship
 
             float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationForce * Time.fixedDeltaTime);
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, _rotationForce * Time.fixedDeltaTime);
         }
         
         void HandleThrust()
         {
-            Vector2 force = transform.up * movementForce;
+            Vector2 force = _transform.up * _movementForce;
             _rb.AddForce(force, ForceMode2D.Force);
-            _rb.linearVelocity = Vector2.ClampMagnitude(_rb.linearVelocity, maxSpeed);
+            _rb.linearVelocity = Vector2.ClampMagnitude(_rb.linearVelocity, _maxSpeed);
         }
 
         bool CheckForObstacles(out RaycastHit2D hit)
         {
-            hit = Physics2D.Raycast(transform.position, transform.up, obstacleAvoidDistance, obstacleLayer);
-            return hit.collider != null && !hit.collider.CompareTag(targetTag);
+            hit = Physics2D.Raycast(_transform.position, _transform.up, _obstacleAvoidDistance, _obstacleLayer);
+            return hit.collider != null && !hit.collider.CompareTag(_targetTag);
         }
 
         Vector2 CalculateAvoidanceDirection(RaycastHit2D hit)
@@ -89,7 +95,7 @@ namespace SpaceArcade.Ship
         {
             if (_rb.linearVelocity.magnitude > 0.1f)
             {
-                _rb.AddForce(-_rb.linearVelocity * brakeForce, ForceMode2D.Force);
+                _rb.AddForce(-_rb.linearVelocity * _brakeForce, ForceMode2D.Force);
             }
             else _rb.linearVelocity = Vector2.zero;
         }

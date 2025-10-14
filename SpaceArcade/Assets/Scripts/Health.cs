@@ -1,26 +1,24 @@
 using System;
-using UnityEngine;
 
 namespace SpaceArcade
 {
-    public class Health : MonoBehaviour, IDamageable
+    public class Health
     {
-        public event Action OnHealthDecrease;
-        public event Action OnHealthIncrease;
-        public float CurrentHp { get; private set; }
-        [field: SerializeField] public float MaxHp { get; private set; }
+        public event Action OnDeath;
+        
+        public float CurrentHp;
+        public float MaxHp;
 
-        void Start()
+        public Health(float maxHp)
         {
-            CurrentHp = MaxHp;
+            MaxHp = maxHp;
+            CurrentHp = maxHp;
         }
 
         public void TakeDamage(float amount)
         {
             if (amount > CurrentHp) CurrentHp = 0f;
             else CurrentHp -= amount;
-
-            OnHealthDecrease?.Invoke();
 
             if (CurrentHp <= 0f)
             {
@@ -36,21 +34,11 @@ namespace SpaceArcade
             else CurrentHp += amount;
 
             if (CurrentHp > MaxHp) CurrentHp = MaxHp;
-
-            OnHealthIncrease?.Invoke();
         }
 
         void HealthIsOver()
         {
-            Destroy(gameObject);
-            //GlobalEventBus.Instance.TriggerGameLose();
+            OnDeath?.Invoke();
         }
-        
-        // private IEnumerator FlashDamage()
-        // {
-        //     _spriteRenderer.color = Color.red;
-        //     yield return new WaitForSeconds(0.1f);
-        //     _spriteRenderer.color = Color.white;
-        // }
     }
 }
