@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SpaceArcade.ObjectPool;
+using UnityEngine;
 
 namespace SpaceArcade.Ship
 {
@@ -35,13 +36,12 @@ namespace SpaceArcade.Ship
             _nextFireTime = Time.time + FireRate;
         }
 
-        protected float AimAtTarget(Vector2 targetPosition, Vector2 turretPosition)
+        protected void AimAtTarget(Vector2 targetPosition, Vector2 turretPosition)
         {
             Vector2 direction = targetPosition - turretPosition;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
             Turret.rotation = Quaternion.Slerp(Turret.rotation, targetRotation, RotationSpeed * Time.deltaTime);
-            return angle;
         }
 
         public void StartShooting()
@@ -56,13 +56,11 @@ namespace SpaceArcade.Ship
 
         protected virtual void ShootFromBarrel(Transform barrel)
         {
-            if (ProjectilePrefab == null || barrel == null)
-                return;
-
-            //TODO Тут замінити на ObjectPool
-            
-            Projectile projectile = Object.Instantiate(ProjectilePrefab, barrel.position, barrel.rotation);
-            projectile.SetOwner(Turret.parent != null ? Turret.parent.gameObject : null);
+            Projectile projectile = PoolManager.Instance.Spawn<Projectile>(
+                ProjectilePrefab.gameObject,
+                barrel.position,
+                barrel.rotation
+            );
         }
     }
 }

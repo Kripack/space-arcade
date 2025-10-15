@@ -1,34 +1,45 @@
 using SpaceArcade.Managers;
+using SpaceArcade.ObjectPool;
 using UnityEngine;
 
 namespace SpaceArcade
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : PoolableObject
     {
-        [Header("Settings")]
+        [Header("Settings")] 
         [SerializeField] float damage = 5f;
         [SerializeField] float speed = 10f;
-        [SerializeField] float lifetime = 3f;
 
         [Header("Visuals")] 
         [SerializeField] GameObject muzzleFlash;
         [SerializeField] GameObject explosionEffect;
-        
-        Rigidbody2D _rb;
-        GameObject _ownerObject;
-        public void SetOwner(GameObject obj) => _ownerObject = obj;
 
-        void Awake()
+        [SerializeField] Rigidbody2D rb;
+        [SerializeField] TrailRenderer trail;
+
+        public override void OnSpawn()
         {
-            _rb = GetComponent<Rigidbody2D>();
+            base.OnSpawn();
+    
+            // rb.position = transform.position;
+            // rb.rotation = transform.rotation.eulerAngles.z;
+            
+            rb.linearVelocity = transform.up * speed;
+    
+            VisualFXManager.Instance.SpawnEffect(muzzleFlash, transform.position, Quaternion.identity);
         }
 
-        void Start()
+        public override void OnReturn()
         {
-            VisualFXManager.Instance.SpawnEffect(muzzleFlash, transform.position, Quaternion.identity, _ownerObject);
+            base.OnReturn();
+    
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
 
-            _rb.linearVelocity = transform.up * speed;
-            Destroy(gameObject, lifetime);
+            if (trail != null)
+            {
+                trail.Clear();
+            }
         }
 
         void OnTriggerEnter2D(Collider2D other)
@@ -37,8 +48,8 @@ namespace SpaceArcade
             {
                 damageable.TakeDamage(damage);
             }
-            VisualFXManager.Instance.SpawnEffect(explosionEffect, transform.position, Quaternion.identity, other.gameObject);
-            Destroy(gameObject);
+            VisualFXManager.Instance.SpawnEffect(explosionEffect, transform.position, Quaternion.identity);
+            ReturnToPool();
         }
     }
 }

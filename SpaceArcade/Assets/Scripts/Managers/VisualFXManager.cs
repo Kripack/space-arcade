@@ -1,3 +1,4 @@
+using SpaceArcade.ObjectPool;
 using UnityEngine;
 
 namespace SpaceArcade.Managers
@@ -36,13 +37,23 @@ namespace SpaceArcade.Managers
             }
         }
     
-        public void SpawnEffect(GameObject impactObject ,Vector3 spawnPosition, Quaternion rotation, GameObject parentObj = null)
+        // public void SpawnEffect(GameObject impactObject ,Vector3 spawnPosition, Quaternion rotation)
+        // {
+        //     if (!impactObject) return;
+        //
+        //     var effect = Instantiate(impactObject, spawnPosition, rotation);
+        // }
+        
+        public void SpawnEffect(GameObject impactObject, Vector3 spawnPosition, Quaternion rotation, float lifetime = 5f)
         {
             if (!impactObject) return;
-        
-            var effect = Instantiate(impactObject, spawnPosition, rotation);
-            if (parentObj != null) effect.transform.parent = parentObj.transform;
+            
+            GameObject effect = PoolManager.Instance.SpawnWithAutoReturn(
+                impactObject,
+                spawnPosition,
+                rotation,
+                lifetime
+            );
         }
-    
     }
 }

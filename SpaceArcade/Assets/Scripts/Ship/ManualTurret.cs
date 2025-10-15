@@ -6,7 +6,7 @@ namespace SpaceArcade.Ship
 {
     public class ManualTurret : BaseTurret
     {
-        InputReader _inputReader;
+        readonly InputReader _inputReader;
         Camera _mainCamera;
 
         public ManualTurret(Transform turret, Transform[] barrels, Projectile projectilePrefab, float fireRate, float rotationSpeed, InputReader inputReader)
@@ -24,6 +24,7 @@ namespace SpaceArcade.Ship
         public void OnDisable()
         {
             _inputReader.Attack -= HandleAttackInput;
+            EndShooting();
         }
 
         void HandleAttackInput(InputAction.CallbackContext context)
@@ -32,7 +33,8 @@ namespace SpaceArcade.Ship
             {
                 StartShooting();
             }
-            else if (context.canceled)
+            
+            if (context.canceled)
             {
                 EndShooting();
             }
