@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SpaceArcade.Input;
+using SpaceArcade.Managers;
 using UnityEngine;
 
 namespace SpaceArcade.Ship
@@ -17,7 +18,8 @@ namespace SpaceArcade.Ship
         {
             _health = new Health(maxHealth);
             _health.OnDeath += Death;
-
+            UIManager.Instance.InitializeHealthBar(_health);
+            
             foreach (TurretData turretData in manualTurrets)
             {
                 ManualTurret newTurret = new ManualTurret(turretData.turret, turretData.barrels, turretData.projectilePrefab, turretData.fireRate, turretData.rotationSpeed, inputReader);
@@ -46,6 +48,7 @@ namespace SpaceArcade.Ship
                 turret.OnDisable();
             }
             
+            Debug.LogWarning("Game Over");
             //TODO: Game Over
         }
         

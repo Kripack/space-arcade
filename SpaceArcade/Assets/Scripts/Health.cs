@@ -5,6 +5,7 @@ namespace SpaceArcade
     public class Health
     {
         public event Action OnDeath;
+        public event Action OnChange;
         
         public float CurrentHp;
         public float MaxHp;
@@ -24,6 +25,8 @@ namespace SpaceArcade
             {
                 HealthIsOver();
             }
+            
+            OnChange?.Invoke();
         }
 
         public void Heal(float amount)

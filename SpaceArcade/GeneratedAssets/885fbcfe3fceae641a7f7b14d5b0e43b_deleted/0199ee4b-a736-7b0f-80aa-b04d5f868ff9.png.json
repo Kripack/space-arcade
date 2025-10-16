@@ -1,0 +1,20 @@
+{
+    "asset": "885fbcfe3fceae641a7f7b14d5b0e43b",
+    "fileName": "0199ee4b-a736-7b0f-80aa-b04d5f868ff9.png",
+    "prompt": "простий інтерфейс для відображення здоров'я",
+    "negativePrompt": "",
+    "model": "94c4260f-b988-40e7-b3d3-435b9f449bd0",
+    "modelName": "Flux.1 Dev",
+    "customSeed": -1,
+    "w3CTraceId": "73d63e264e93f8df3b2310bd7a7fe32f",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}
