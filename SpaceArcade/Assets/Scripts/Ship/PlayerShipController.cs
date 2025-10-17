@@ -19,6 +19,7 @@ namespace SpaceArcade.Ship
             _health = new Health(maxHealth);
             _health.OnDeath += Death;
             UIManager.Instance.InitializeHealthBar(_health);
+            UIManager.Instance.InitializeBoostBar(GetComponent<PlayerMovement>());
             
             foreach (TurretData turretData in manualTurrets)
             {

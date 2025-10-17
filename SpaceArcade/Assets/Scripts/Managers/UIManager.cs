@@ -1,4 +1,5 @@
-﻿using SpaceArcade.UI;
+﻿using SpaceArcade.Ship;
+using SpaceArcade.UI;
 using UnityEngine;
 
 namespace SpaceArcade.Managers
@@ -8,6 +9,7 @@ namespace SpaceArcade.Managers
         public static UIManager Instance { get; private set; }
     
         [SerializeField] HealthBarUI healthBarUI;
+        [SerializeField] BoostBarUI boostBarUI;
     
         void Awake()
         {
@@ -18,6 +20,11 @@ namespace SpaceArcade.Managers
         public void InitializeHealthBar(Health health)
         {
             healthBarUI.Initialize(health);
+        }
+
+        public void InitializeBoostBar(PlayerMovement playerMovement)
+        {
+            boostBarUI.Initialize(playerMovement);
         }
     }
 }
