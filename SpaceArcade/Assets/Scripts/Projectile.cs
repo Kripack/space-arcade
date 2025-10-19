@@ -10,9 +10,13 @@ namespace SpaceArcade
         [SerializeField] float damage = 5f;
         [SerializeField] float speed = 10f;
 
-        [Header("Visuals")] 
+        [Header("Effects")] 
         [SerializeField] GameObject muzzleFlash;
         [SerializeField] GameObject explosionEffect;
+        [SerializeField] AudioClip impactSound;
+        [SerializeField] float impactSoundVolume = 0.5f;
+        [SerializeField] AudioClip fireSound;
+        [SerializeField] float fireSoundVolume = 1f;
 
         [SerializeField] Rigidbody2D rb;
         [SerializeField] TrailRenderer trail;
@@ -20,13 +24,11 @@ namespace SpaceArcade
         public override void OnSpawn()
         {
             base.OnSpawn();
-    
-            // rb.position = transform.position;
-            // rb.rotation = transform.rotation.eulerAngles.z;
             
             rb.linearVelocity = transform.up * speed;
     
             VisualFXManager.Instance.SpawnEffect(muzzleFlash, transform.position, Quaternion.identity);
+            AudioManager.Instance.PlaySfx(fireSound, fireSoundVolume);
         }
 
         public override void OnReturn()
@@ -48,7 +50,10 @@ namespace SpaceArcade
             {
                 damageable.TakeDamage(damage);
             }
+            
             VisualFXManager.Instance.SpawnEffect(explosionEffect, transform.position, Quaternion.identity);
+            AudioManager.Instance.PlaySfx(impactSound, impactSoundVolume);
+            
             ReturnToPool();
         }
     }

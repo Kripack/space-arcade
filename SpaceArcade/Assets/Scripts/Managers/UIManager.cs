@@ -10,6 +10,7 @@ namespace SpaceArcade.Managers
     
         [SerializeField] HealthBarUI healthBarUI;
         [SerializeField] BoostBarUI boostBarUI;
+        [SerializeField] ShieldBarUI shieldBarUI;
     
         void Awake()
         {
@@ -25,6 +26,11 @@ namespace SpaceArcade.Managers
         public void InitializeBoostBar(PlayerMovement playerMovement)
         {
             boostBarUI.Initialize(playerMovement);
+        }
+        
+        public void InitializeShieldBar(Shield shield)
+        {
+            shieldBarUI.Initialize(shield);
         }
     }
 }

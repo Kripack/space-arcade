@@ -1,0 +1,13 @@
+{
+    "asset": "391415ba7fe40fa45beae0e59a56d748",
+    "fileName": "0199f391-48e5-7794-b4d7-cfc015dd3d90.wav",
+    "prompt": "short asteroid explosion",
+    "negativePrompt": "",
+    "model": "0ee39b33-2893-4e0f-8c46-0e0bdd4eda85",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "a007861041924dad0bd5725f0f60dff4",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

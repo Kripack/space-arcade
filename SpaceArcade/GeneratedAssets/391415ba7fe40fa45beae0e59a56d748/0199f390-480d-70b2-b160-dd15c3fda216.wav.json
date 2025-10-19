@@ -1,0 +1,13 @@
+{
+    "asset": "391415ba7fe40fa45beae0e59a56d748",
+    "fileName": "0199f390-480d-70b2-b160-dd15c3fda216.wav",
+    "prompt": "short space gun shot",
+    "negativePrompt": "",
+    "model": "0ee39b33-2893-4e0f-8c46-0e0bdd4eda85",
+    "modelName": "Text to Sound",
+    "customSeed": -1,
+    "w3CTraceId": "a318c9d6b34d6e224816c3d8a2cdca5a",
+    "duration": 1.0,
+    "autoTrim": true,
+    "hasReference": false
+}

@@ -36,11 +36,16 @@ namespace SpaceArcade.ObjectPool
             }
         }
 
+        int GetPrefabId(GameObject prefab)
+        {
+            return prefab.name.GetHashCode();
+        }
+
         public void PrewarmPool(GameObject prefab, int count)
         {
             if (prefab == null) return;
 
-            int prefabId = prefab.GetInstanceID();
+            int prefabId = GetPrefabId(prefab);
 
             if (!_pools.ContainsKey(prefabId))
             {
@@ -64,7 +69,7 @@ namespace SpaceArcade.ObjectPool
                 return null;
             }
 
-            int prefabId = prefab.GetInstanceID();
+            int prefabId = GetPrefabId(prefab);
 
             if (!_pools.ContainsKey(prefabId))
             {
@@ -159,7 +164,7 @@ namespace SpaceArcade.ObjectPool
         {
             if (prefab == null) return;
 
-            int prefabId = prefab.GetInstanceID();
+            int prefabId = GetPrefabId(prefab);
 
             if (_pools.ContainsKey(prefabId))
             {
